@@ -1,0 +1,26 @@
+# Build results
+bin/
+obj/
+# User-specific files
+.vs/
+*.user
+*.suo
+
+# Secrets & environment configs
+appsettings.Development.json
+
+# ASP.NET Core secret files
+secrets.json
+
+# Other
+*.log
+*.db
+.env
+*.sqlite
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+wwwroot/
+*.scss
