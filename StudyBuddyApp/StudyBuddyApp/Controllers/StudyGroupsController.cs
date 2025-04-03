@@ -39,7 +39,9 @@ namespace StudyBuddyApp.Controllers
             }
 
             var studyGroup = await _context.StudyGroups
-                .Include(s => s.CreatedBy)
+                .Include(s => s.Sessions)
+                .Include(g => g.Resources)
+                .ThenInclude(r => r.UploadedBy) // Include the user who uploaded the resources  
                 .FirstOrDefaultAsync(m => m.StudyGroupId == id);
             if (studyGroup == null)
             {
@@ -77,6 +79,7 @@ namespace StudyBuddyApp.Controllers
                 }
 
                 studyGroup.CreatedById = userId;
+                studyGroup.InviteCode = Guid.NewGuid().ToString().Substring(0, 6).ToUpper();
                 _context.Add(studyGroup);
                 await _context.SaveChangesAsync();
 
@@ -181,5 +184,74 @@ namespace StudyBuddyApp.Controllers
         {
             return _context.StudyGroups.Any(e => e.StudyGroupId == id);
         }
+
+        public async Task<IActionResult> Leaderboard(int id)
+        {
+            var group = await _context.StudyGroups.FindAsync(id);
+            if (group == null) return NotFound();
+
+            var sessions = await _context.Sessions
+                .Where(s => s.StudyGroupId == id)
+                .GroupBy(s => s.CreatedById)
+                .Select(g => new { UserId = g.Key, Count = g.Count() })
+                .ToListAsync();
+
+            var resources = await _context.Resources
+                .Where(r => r.StudyGroupId == id)
+                .GroupBy(r => r.UploadedById)
+                .Select(g => new { UserId = g.Key, Count = g.Count() })
+                .ToListAsync();
+
+            var allUserIds = sessions.Select(s => s.UserId)
+                .Union(resources.Select(r => r.UserId))
+                .Distinct()
+                .ToList();
+
+            var users = await _userManager.Users
+                .Where(u => allUserIds.Contains(u.Id))
+                .ToListAsync();
+
+            var leaderboard = new List<LeaderboardEntry>();
+
+            foreach (var user in users)
+            {
+                var sessionCount = sessions.FirstOrDefault(s => s.UserId == user.Id)?.Count ?? 0;
+                var resourceCount = resources.FirstOrDefault(r => r.UserId == user.Id)?.Count ?? 0;
+
+                leaderboard.Add(new LeaderboardEntry
+                {
+                    UserId = user.Id,
+                    Email = user.Email,
+                    SessionsCreated = sessionCount,
+                    ResourcesUploaded = resourceCount
+                });
+            }
+
+            var viewModel = new GroupLeaderboardViewModel
+            {
+                GroupId = id,
+                GroupName = group.GroupName,
+                Entries = leaderboard.OrderByDescending(e => e.TotalScore).ToList()
+            };
+
+            return View(viewModel);
+        }
+
+        public async Task<IActionResult> Members(int id)
+        {
+            var group = await _context.StudyGroups
+                .Include(g => g.GroupMembers)
+                    .ThenInclude(gm => gm.User)
+                .FirstOrDefaultAsync(g => g.StudyGroupId == id);
+
+            if (group == null)
+            {
+                return NotFound();
+            }
+
+            return View(group);
+        }
+
+
     }
 }

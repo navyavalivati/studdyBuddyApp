@@ -1,0 +1,35 @@
+﻿@model StudyBuddyApp.ViewModels.GroupLeaderboardViewModel
+
+@{
+    ViewData["Title"] = "Leaderboard";
+}
+
+<h2>@Model.GroupName - Leaderboard 🏆</h2>
+<hr />
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Rank</th>
+            <th>User</th>
+            <th>Sessions</th>
+            <th>Resources</th>
+            <th>Total Score</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.Entries.Count; i++)
+        {
+            var entry = Model.Entries[i];
+            <tr>
+                <td>@(i + 1)</td>
+                <td>@entry.Email</td>
+                <td>@entry.SessionsCreated</td>
+                <td>@entry.ResourcesUploaded</td>
+                <td>@entry.TotalScore</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Details" asp-route-id="@Model.GroupId" class="btn btn-secondary">Back to Group</a>

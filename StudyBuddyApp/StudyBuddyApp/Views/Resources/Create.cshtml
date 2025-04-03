@@ -1,0 +1,46 @@
+﻿@model StudyBuddyApp.Models.Resource
+
+@{
+    ViewData["Title"] = "Add Resource";
+}
+
+<h2>Add Resource</h2>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="StudyGroupId" />
+
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Tags" class="control-label"></label>
+                <input asp-for="Tags" class="form-control" />
+                <span asp-validation-for="Tags" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="uploadedFile">Upload File</label>
+                <input type="file" name="uploadedFile" class="form-control" />
+            </div>
+
+            <div class="form-group mt-3">
+                <input type="submit" value="Upload" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

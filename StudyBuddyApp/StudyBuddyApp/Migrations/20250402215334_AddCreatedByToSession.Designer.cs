@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using StudyBuddyApp.Models.StudyBuddyApp.Models;
@@ -11,9 +12,11 @@ using StudyBuddyApp.Models.StudyBuddyApp.Models;
 namespace StudyBuddyApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250402215334_AddCreatedByToSession")]
+    partial class AddCreatedByToSession
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -232,25 +235,25 @@ namespace StudyBuddyApp.Migrations
 
             modelBuilder.Entity("StudyBuddyApp.Models.GroupMember", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("GroupMemberId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("GroupMemberId"));
 
-                    b.Property<DateTime>("JoinedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("StudyGroupId")
+                    b.Property<int>("GroupId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("Id");
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
 
-                    b.HasIndex("StudyGroupId");
+                    b.HasKey("GroupMemberId");
+
+                    b.HasIndex("GroupId");
 
                     b.HasIndex("UserId");
 
@@ -308,15 +311,15 @@ namespace StudyBuddyApp.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("GroupId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("StudyGroupId")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Topic")
                         .IsRequired()
@@ -326,7 +329,7 @@ namespace StudyBuddyApp.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.HasIndex("StudyGroupId");
+                    b.HasIndex("GroupId");
 
                     b.ToTable("Sessions");
                 });
@@ -351,10 +354,6 @@ namespace StudyBuddyApp.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("InviteCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("Subject")
                         .IsRequired()
                         .HasColumnType("text");
@@ -364,6 +363,35 @@ namespace StudyBuddyApp.Migrations
                     b.HasIndex("CreatedById");
 
                     b.ToTable("StudyGroups");
+                });
+
+            modelBuilder.Entity("StudyBuddyApp.Models.User", b =>
+                {
+                    b.Property<int>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserId"));
+
+                    b.Property<string>("Bio")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("University")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -419,19 +447,19 @@ namespace StudyBuddyApp.Migrations
 
             modelBuilder.Entity("StudyBuddyApp.Models.GroupMember", b =>
                 {
-                    b.HasOne("StudyBuddyApp.Models.StudyGroup", "StudyGroup")
-                        .WithMany("GroupMembers")
-                        .HasForeignKey("StudyGroupId")
+                    b.HasOne("StudyBuddyApp.Models.StudyGroup", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("StudyBuddyApp.Models.ApplicationUser", "User")
+                    b.HasOne("StudyBuddyApp.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("StudyGroup");
+                    b.Navigation("Group");
 
                     b.Navigation("User");
                 });
@@ -463,15 +491,15 @@ namespace StudyBuddyApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("StudyBuddyApp.Models.StudyGroup", "StudyGroup")
+                    b.HasOne("StudyBuddyApp.Models.StudyGroup", "Group")
                         .WithMany("Sessions")
-                        .HasForeignKey("StudyGroupId")
+                        .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("CreatedBy");
 
-                    b.Navigation("StudyGroup");
+                    b.Navigation("Group");
                 });
 
             modelBuilder.Entity("StudyBuddyApp.Models.StudyGroup", b =>
@@ -487,8 +515,6 @@ namespace StudyBuddyApp.Migrations
 
             modelBuilder.Entity("StudyBuddyApp.Models.StudyGroup", b =>
                 {
-                    b.Navigation("GroupMembers");
-
                     b.Navigation("Resources");
 
                     b.Navigation("Sessions");

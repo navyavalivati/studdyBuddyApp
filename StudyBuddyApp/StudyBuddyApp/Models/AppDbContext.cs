@@ -14,6 +14,7 @@
             public DbSet<GroupMember> GroupMembers { get; set; }
             public DbSet<Session> Sessions { get; set; }
             public DbSet<Resource> Resources { get; set; }
+
         }
     }
 

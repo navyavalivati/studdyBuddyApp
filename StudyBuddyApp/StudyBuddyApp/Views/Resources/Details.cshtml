@@ -1,0 +1,44 @@
+﻿@model StudyBuddyApp.Models.Resource
+
+@{
+    ViewData["Title"] = "Resource Details";
+}
+
+<h2>Resource Details</h2>
+<hr />
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-3">Title</dt>
+        <dd class="col-sm-9">@Model.Title</dd>
+
+        <dt class="col-sm-3">Tags</dt>
+        <dd class="col-sm-9">@Model.Tags</dd>
+
+        <dt class="col-sm-3">Uploaded By</dt>
+        <dd class="col-sm-9">@Model.UploadedBy?.Email</dd>
+
+        <dt class="col-sm-3">Uploaded At</dt>
+        <dd class="col-sm-9">@Model.UploadedAt.ToString("f")</dd>
+
+        <dt class="col-sm-3">Study Group</dt>
+        <dd class="col-sm-9">@Model.StudyGroup?.GroupName</dd>
+
+        <dt class="col-sm-3">Download File</dt>
+        <dd class="col-sm-9">
+            @if (!string.IsNullOrEmpty(Model.FilePath))
+            {
+                <a href="@Model.FilePath" target="_blank" download>Download</a>
+            }
+            else
+            {
+                <span>No file uploaded.</span>
+            }
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.ResourceId" class="btn btn-primary">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

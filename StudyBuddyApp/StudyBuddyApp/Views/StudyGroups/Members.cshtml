@@ -1,0 +1,35 @@
+﻿@model StudyBuddyApp.Models.StudyGroup
+
+@{
+    ViewData["Title"] = "Group Members";
+}
+
+<h2>@Model.GroupName - Members</h2>
+<hr />
+
+@if (Model.GroupMembers != null && Model.GroupMembers.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Joined At</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var member in Model.GroupMembers)
+            {
+                <tr>
+                    <td>@member.User?.Email</td>
+                    <td>@member.JoinedAt.ToString("f")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No members have joined this group yet.</p>
+}
+
+<a asp-action="Details" asp-route-id="@Model.StudyGroupId" class="btn btn-secondary">Back to Group</a>

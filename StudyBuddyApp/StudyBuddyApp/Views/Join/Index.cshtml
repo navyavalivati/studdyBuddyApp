@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "Join a Study Group";
+}
+
+<h2>Join Group via Invite Code</h2>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Info"] != null)
+{
+    <div class="alert alert-info">@TempData["Info"]</div>
+}
+
+<form asp-action="Index" method="post">
+    <div class="form-group">
+        <label for="inviteCode">Invite Code</label>
+        <input type="text" name="inviteCode" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Join Group</button>
+</form>

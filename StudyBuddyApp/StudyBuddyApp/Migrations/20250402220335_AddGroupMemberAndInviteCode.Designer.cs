@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using StudyBuddyApp.Models.StudyBuddyApp.Models;
@@ -11,9 +12,11 @@ using StudyBuddyApp.Models.StudyBuddyApp.Models;
 namespace StudyBuddyApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250402220335_AddGroupMemberAndInviteCode")]
+    partial class AddGroupMemberAndInviteCode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -308,15 +311,15 @@ namespace StudyBuddyApp.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("GroupId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("StudyGroupId")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Topic")
                         .IsRequired()
@@ -326,7 +329,7 @@ namespace StudyBuddyApp.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.HasIndex("StudyGroupId");
+                    b.HasIndex("GroupId");
 
                     b.ToTable("Sessions");
                 });
@@ -463,15 +466,15 @@ namespace StudyBuddyApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("StudyBuddyApp.Models.StudyGroup", "StudyGroup")
+                    b.HasOne("StudyBuddyApp.Models.StudyGroup", "Group")
                         .WithMany("Sessions")
-                        .HasForeignKey("StudyGroupId")
+                        .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("CreatedBy");
 
-                    b.Navigation("StudyGroup");
+                    b.Navigation("Group");
                 });
 
             modelBuilder.Entity("StudyBuddyApp.Models.StudyGroup", b =>

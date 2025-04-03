@@ -1,42 +1,97 @@
 ﻿@model StudyBuddyApp.Models.StudyGroup
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Group Details";
 }
 
-<h1>Details</h1>
+<h2>@Model.GroupName</h2>
+<a asp-action="Leaderboard" asp-route-id="@Model.StudyGroupId" class="btn btn-outline-info btn-sm float-end">🏆 View Leaderboard</a>
+<hr />
 
 <div>
-    <h4>StudyGroup</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.GroupName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.GroupName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Subject)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Subject)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedBy)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedBy.Id)
-        </dd>
-    </dl>
+    <h4>Description:</h4>
+    <p>@Model.Description</p>
+
+    <h4>Subject:</h4>
+    <p>@Model.Subject</p>
+
+    <h4>Sessions</h4>
+    <a asp-controller="Sessions" asp-action="Create" asp-route-studyGroupId="@Model.StudyGroupId">+ Schedule Session</a>
+
+    @if (Model.Sessions != null && Model.Sessions.Any())
+    {
+        <table class="table mt-2">
+            <thead>
+                <tr>
+                    <th>Topic</th>
+                    <th>Start Time</th>
+                    <th>Location</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var session in Model.Sessions)
+                {
+                    <tr>
+                        <td>@session.Topic</td>
+                        <td>@session.StartTime.ToString("f")</td>
+                        <td>@session.Location</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No sessions scheduled.</p>
+    }
+
+    <h4 class="mt-4">Resources</h4>
+    <a asp-controller="Resources" asp-action="Create" asp-route-studyGroupId="@Model.StudyGroupId">+ Share Resource</a>
+
+    @if (Model.Resources != null && Model.Resources.Any())
+    {
+        <table class="table mt-2">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Tags</th>
+                    <th>Uploaded By</th>
+                    <th>Uploaded At</th>
+                    <th>Download</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var resource in Model.Resources)
+                {
+                    <tr>
+                        <td>@resource.Title</td>
+                        <td>@resource.Tags</td>
+                        <td>@resource.UploadedBy?.Email</td>
+                        <td>@resource.UploadedAt.ToString("f")</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(resource.FilePath))
+                            {
+                                <a href="@resource.FilePath" download>Download</a>
+                            }
+                            else
+                            {
+                                <em>No file</em>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No resources shared yet.</p>
+    }
+
+    <a asp-action="Members" asp-route-id="@Model.StudyGroupId" class="btn btn-outline-dark mt-3">👥 View Members</a>
+
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.StudyGroupId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="mt-4">
+    <a asp-action="Index" class="btn btn-secondary">Back to Group List</a>
 </div>
