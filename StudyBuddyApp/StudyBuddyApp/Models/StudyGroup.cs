@@ -25,7 +25,6 @@ namespace StudyBuddyApp.Models
 
         public ICollection<Resource> Resources { get; set; } // ✅ Add this
         public ICollection<Session> Sessions { get; set; } // Navigation property for related sessions
-        [Required]
         public string InviteCode { get; set; }
 
         public ICollection<GroupMember> GroupMembers { get; set; } // You'll add this model next

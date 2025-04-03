@@ -24,6 +24,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.CreatedBy)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InviteCode)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -40,7 +43,10 @@
                 @Html.DisplayFor(modelItem => item.Subject)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CreatedBy.Id)
+                @Html.DisplayFor(modelItem => item.CreatedBy.Email)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.InviteCode)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.StudyGroupId">Edit</a> |

@@ -66,11 +66,7 @@ namespace StudyBuddyApp.Controllers
         public async Task<IActionResult> Create(StudyGroup studyGroup)
         {
             
-            ModelState.Remove("CreatedBy");
-            ModelState.Remove("CreatedById");
-
-            if (ModelState.IsValid)
-            {
+            
                 var userId = _userManager.GetUserId(User);
 
                 if (userId == null)
@@ -79,15 +75,14 @@ namespace StudyBuddyApp.Controllers
                 }
 
                 studyGroup.CreatedById = userId;
-                studyGroup.InviteCode = Guid.NewGuid().ToString().Substring(0, 6).ToUpper();
+                studyGroup.InviteCode ??= Guid.NewGuid().ToString().Substring(0, 6).ToUpper();
                 _context.Add(studyGroup);
                 await _context.SaveChangesAsync();
 
                 TempData["SuccessMessage"] = "Study group created successfully!";
                 return RedirectToAction(nameof(Index));
-            }
-
-            return View(studyGroup);
+            
+            //return View(studyGroup);
         }
 
 
