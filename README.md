@@ -1,4 +1,4 @@
-## Study Buddy App
+# Study Buddy App
 
 Study Buddy App is a web application built with ASP.NET Core that helps students create and manage study groups, schedule sessions, share resources, and collaborate with peers. It offers both individual and group study management features, with authentication via ASP.NET Identity and a user-friendly dashboard.
 
