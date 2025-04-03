@@ -33,20 +33,26 @@ namespace StudyBuddyApp.Controllers
         // GET: StudyGroups/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            if (id == null) return NotFound();
+
+            var userId = _userManager.GetUserId(User);
+            var isMember = await _context.GroupMembers
+                .AnyAsync(gm => gm.StudyGroupId == id && gm.UserId == userId);
+
+            if (!isMember)
             {
-                return NotFound();
+                return Forbid(); // or Redirect to dashboard
             }
 
             var studyGroup = await _context.StudyGroups
-                .Include(s => s.Sessions)
+                .Include(g => g.Sessions)
                 .Include(g => g.Resources)
-                .ThenInclude(r => r.UploadedBy) // Include the user who uploaded the resources  
+                    .ThenInclude(r => r.UploadedBy)
+                .Include(g => g.GroupMembers)
+                    .ThenInclude(m => m.User)
                 .FirstOrDefaultAsync(m => m.StudyGroupId == id);
-            if (studyGroup == null)
-            {
-                return NotFound();
-            }
+
+            if (studyGroup == null) return NotFound();
 
             return View(studyGroup);
         }
@@ -90,6 +96,7 @@ namespace StudyBuddyApp.Controllers
         // GET: StudyGroups/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            
             if (id == null)
             {
                 return NotFound();
@@ -115,10 +122,19 @@ namespace StudyBuddyApp.Controllers
             {
                 return NotFound();
             }
+
+            // Prevent model binding from overwriting InviteCode if it's not included in the form
+            var existingGroup = await _context.StudyGroups.AsNoTracking().FirstOrDefaultAsync(g => g.StudyGroupId == id);
+            if (existingGroup == null) return NotFound();
+
+            // Preserve InviteCode and CreatedById
+            studyGroup.InviteCode = existingGroup.InviteCode;
+            studyGroup.CreatedById = existingGroup.CreatedById;
+
+            ModelState.Remove("InviteCode");
             ModelState.Remove("CreatedBy");
             ModelState.Remove("CreatedById");
-            if (ModelState.IsValid)
-            {
+
                 try
                 {
                     _context.Update(studyGroup);
@@ -127,18 +143,12 @@ namespace StudyBuddyApp.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!StudyGroupExists(studyGroup.StudyGroupId))
-                    {
                         return NotFound();
-                    }
                     else
-                    {
                         throw;
-                    }
                 }
                 return RedirectToAction(nameof(Index));
-            }
-            ViewData["CreatedById"] = new SelectList(_context.Set<User>(), "UserId", "UserId", studyGroup.CreatedById);
-            return View(studyGroup);
+            
         }
 
         // GET: StudyGroups/Delete/5

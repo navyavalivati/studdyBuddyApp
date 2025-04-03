@@ -59,14 +59,12 @@ namespace StudyBuddyApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("SessionId,GroupId,Topic,StartTime,Location")] Session session)
         {
-            if (ModelState.IsValid)
-            {
+            
                 _context.Add(session);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-            }
-            ViewData["GroupId"] = new SelectList(_context.StudyGroups, "StudyGroupId", "Description", session.StudyGroupId);
-            return View(session);
+                //ViewData["GroupId"] = new SelectList(_context.StudyGroups, "StudyGroupId", "Description", session.StudyGroupId);
+           
         }
 
         // GET: Sessions/Edit/5

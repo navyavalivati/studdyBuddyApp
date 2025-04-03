@@ -48,7 +48,7 @@ namespace StudyBuddyApp.Controllers
             {
                 StudyGroupId = group.StudyGroupId,
                 UserId = userId,
-                JoinedAt = DateTime.Now
+                JoinedAt = DateTime.UtcNow
             };
 
             _context.GroupMembers.Add(member);

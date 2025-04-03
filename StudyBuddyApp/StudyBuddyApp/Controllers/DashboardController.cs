@@ -22,14 +22,18 @@ namespace StudyBuddyApp.Controllers
         {
             var userId = _userManager.GetUserId(User);
 
+            // Only joined groups
             var groups = await _context.GroupMembers
                 .Where(m => m.UserId == userId)
                 .Include(m => m.StudyGroup)
                 .Select(m => m.StudyGroup)
                 .ToListAsync();
 
+            // Upcoming sessions from joined groups only
+
             var upcomingSessions = await _context.Sessions
-                .Where(s => groups.Select(g => g.StudyGroupId).Contains(s.StudyGroupId) && s.StartTime >= DateTime.UtcNow)
+                .Where(s => s.StartTime >= DateTime.UtcNow &&
+                            groups.Select(g => g.StudyGroupId).Contains(s.StudyGroupId))
                 .Include(s => s.StudyGroup)
                 .OrderBy(s => s.StartTime)
                 .ToListAsync();

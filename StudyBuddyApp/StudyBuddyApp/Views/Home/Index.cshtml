@@ -1,8 +1,62 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Homepage styles -->
+<style>
+    body {
+        background: linear-gradient(to right, #f9fafe, #e2eafc);
+        font-family: 'Inter', sans-serif;
+    }
+
+    .hero-section {
+        min-height: 85vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+    }
+
+    .hero-card {
+        background-color: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+        text-align: center;
+        max-width: 900px;
+    }
+
+    .hero-img {
+        max-width: 300px;
+        margin-bottom: 20px;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .hero-text {
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+        color: #444;
+    }
+
+    .btn-lg {
+        font-size: 1rem;
+        padding: 12px 24px;
+        font-weight: 600;
+    }
+</style>
+
+<div class="container hero-section">
+    <div class="hero-card mx-auto">
+        <img src="https://cdn-icons-png.flaticon.com/512/201/201614.png" alt="Study Cartoon" class="hero-img" />
+
+        <h1 class="hero-title">Welcome to Study Buddy! </h1>
+        <p class="hero-text">Organize your study groups, schedule sessions, share resources, and collaborate like a pro!</p>
+        <h5> Login/Register to get started!</h5>
+    </div>
 </div>
